@@ -1,5 +1,6 @@
 from os.path import exists
 import re
+from random import randint
 
 colors = {
     "okay": '\033[94m',
@@ -10,10 +11,13 @@ colors = {
     "prompt": '\033[95m'
 }
 
+def remove_quotes(inp):   
+    reg = re.compile(r'"(.+)"')
+    found = reg.findall(inp)
+    return found[0] if len(found) > 0 else inp
+
 f = input(f'{colors["prompt"]}Enter playlist location \n {colors["end"]}')
-reg = re.compile(r'"(.+)"')
-found = reg.findall(f)
-f = found[0] if len(found) > 0 else f
+f = remove_quotes(f)
 
 while not exists(f):
     print()
@@ -22,10 +26,7 @@ while not exists(f):
     if f.lower() == "exit":
         exit()
 
-    reg = re.compile(r'"(.+)"')
-    found = reg.findall(f)
-    
-    f = found[0] if len(found) > 0 else f
+    f = remove_quotes(f)
 
 extRgx = re.compile(r"\.(\w+)$")
 ext = extRgx.findall(f)[0]
@@ -39,27 +40,23 @@ while mode.lower() != "y" and mode.lower() != "n":
     if mode.lower() == "exit":
         exit()
 
-files = []
+files = set() if mode.lower() == "y" else []
 
-if mode.lower() == "y":
-    files = set()
-    with open(f) as file:
-        for line in file:
-            line = line.replace('\n', '')
-            if exists(line):
-                files.add(line) 
-
-else:
-    with open(f) as file:
-        for line in file:
-            line = line.replace('\n', '')
-            if exists(line):
+with open(f) as file:
+    for line in file:
+        line = line.replace('\n', '')
+        if exists(line):
+            if mode.lower() == 'y':
+                files.add(line)
+            else:
                 files.append(line)
 
-newname = f"{filename} - CLEANED.{ext}"
+
+newname = f"{filename} - CLEANED {randint(100, 9999)}.{ext}"
 
 with open(newname, 'w', encoding='UTF8') as newFile:
-    for item in files:
-        newFile.write(item + '\n')
+    if (ext == "m3u"):
+        for item in files:
+            newFile.write(item + '\n')
 
 print(f"{colors['success']}Playlist cleaned. Output stored at {newname} {colors['end']}")
