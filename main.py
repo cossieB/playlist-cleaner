@@ -40,16 +40,27 @@ while mode.lower() != "y" and mode.lower() != "n":
     if mode.lower() == "exit":
         exit()
 
-files = set() if mode.lower() == "y" else []
+files = []
+
+def get_filenames(regexPattern, searchString):
+    rgx = re.compile(regexPattern)
+    found = rgx.findall(searchString)
+    return found[0] if len(found) > 0 else ""
 
 with open(f) as file:
     for line in file:
         line = line.replace('\n', '')
+
+        if ext == "pls":
+            line = get_filenames(r"\=(.+)", line)
+        
+        if ext == "asx":
+            line = get_filenames(r'= "(.+)"', line)
+
         if exists(line):
-            if mode.lower() == 'y':
-                files.add(line)
-            else:
-                files.append(line)
+            if line in files and mode.lower() == "y":
+                continue
+            files.append(line)
 
 
 newname = f"{filename} - CLEANED {randint(100, 9999)}.{ext}"
@@ -58,5 +69,17 @@ with open(newname, 'w', encoding='UTF8') as newFile:
     if (ext == "m3u"):
         for item in files:
             newFile.write(item + '\n')
+    
+    if (ext == "pls"):
+        newFile.write("[playlist]\n")
+        for  idx in range(len(files)):
+            newFile.write(f"File{idx+1}={files[idx]}\n")
+        newFile.write(f'NumberOfEntries={len(files)}\nVersion=2')
+
+    if (ext == "asx"):
+        newFile.write('<ASX version = "3.0">\n')
+        for item in files:
+            newFile.write(f'<Entry><Ref href = "{item}"/></Entry>\n')
+        newFile.write('</ASX>')
 
 print(f"{colors['success']}Playlist cleaned. Output stored at {newname} {colors['end']}")

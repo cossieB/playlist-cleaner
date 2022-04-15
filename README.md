@@ -1,6 +1,6 @@
 # Playist Cleaner
 
-Remove deleted files from your playlists and optionally remove duplicates as well. Currently only .m3u playlists are supported, .pls and .asx supported will be added soon.
+Remove deleted files from your playlists and optionally remove duplicates as well. Currently only .m3u .pls and .asx playlists are supported.
 
 ## Instructions
 1. Python is required. [Download](https://www.python.org/downloads/) and install.
