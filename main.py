@@ -16,12 +16,12 @@ def remove_quotes(inp):
     found = reg.findall(inp)
     return found[0] if len(found) > 0 else inp
 
-f = input(f'{colors["prompt"]}Enter playlist location \n {colors["end"]}')
+f = input(f'{colors["prompt"]}Enter playlist location {colors["end"]}\n{colors["info"]}Supported formats: m3u, pls, asx {colors["end"]}\n')
 f = remove_quotes(f)
 
 while not exists(f):
     print()
-    f = input(f'{colors["fail"]}Error: Playlist not found. {colors["end"]}  Please enter a valid playlist location {colors["info"]}\nHint: On Windows you can right-click on the playlist while holding SHIFT then select "copy as path". Paste the path into with CTRL-SHIFT-V.{colors["end"]} \nType "exit" to exit  \n')
+    f = input(f'{colors["fail"]}Error: Playlist not found. {colors["end"]}  Please enter a valid playlist location {colors["info"]}\nHint: On Windows you can right-click on the playlist while holding SHIFT then select "copy as path". Paste the path into the terminal with CTRL-SHIFT-V.{colors["end"]} \nType "exit" to exit  \n')
     
     if f.lower() == "exit":
         exit()
@@ -70,13 +70,13 @@ with open(newname, 'w', encoding='UTF8') as newFile:
         for item in files:
             newFile.write(item + '\n')
     
-    if (ext == "pls"):
+    elif (ext == "pls"):
         newFile.write("[playlist]\n")
         for  idx in range(len(files)):
             newFile.write(f"File{idx+1}={files[idx]}\n")
         newFile.write(f'NumberOfEntries={len(files)}\nVersion=2')
 
-    if (ext == "asx"):
+    elif (ext == "asx"):
         newFile.write('<ASX version = "3.0">\n')
         for item in files:
             newFile.write(f'<Entry><Ref href = "{item}"/></Entry>\n')
